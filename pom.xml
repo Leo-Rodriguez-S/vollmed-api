@@ -1,0 +1,311 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- ═══════════════════════════════════════════════════════ -->
+	<!-- PARENT: Spring Boot Starter Parent                      -->
+	<!-- ═══════════════════════════════════════════════════════ -->
+	<!-- POM PADRE que proporciona: gestión de versiones compatibles entre dependencias,
+	configuración por defecto y plugins pre-configurados -->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>3.5.12</version>
+		<relativePath/>
+	</parent>
+
+	<!-- ═══════════════════════════════════════════════════════ -->
+	<!-- IDENTIFICADORES DEL PROYECTO                            -->
+	<!-- ═══════════════════════════════════════════════════════ -->
+	<!-- 1 - Identificador único de la organización con dominio invertido por convención -->
+	<groupId>med.voll</groupId>
+	<!-- 2 - Nombre del proyecto / módulo, que debe ser único dentro del groupId -->
+	<artifactId>api</artifactId>
+	<!-- 3 - Versión del proyecto / SNAPSHOT significa que trabajamos en una versión cuyo release
+	no se ha lanzado porque aún el proyecto está en desarrollo, es una versión no estable -->
+	<version>0.0.1-SNAPSHOT</version>
+
+	<name/>
+	<description/>
+	<url/>
+
+	<licenses>
+		<license/>
+	</licenses>
+
+	<developers>
+		<developer/>
+	</developers>
+
+	<scm>
+		<connection/>
+		<developerConnection/>
+		<tag/>
+		<url/>
+	</scm>
+
+	<properties>
+		<java.version>17</java.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<!-- ═══════════════════════════════════════════════════════ -->
+	<!-- DEPENDENCIAS                                            -->
+	<!-- ═══════════════════════════════════════════════════════ -->
+	<dependencies>
+		<!-- 1. SPRING BOOT STARTER DATA JPA -->
+		<!--
+		Es un STARTER (conjunto de dependencias relacionadas) que incluye:
+		-Spring Data JPA -> Simplifica el acceso a datos con el uso de interfaces (Ej. MedicoRepository extends JpaRepository)
+		-Hibernate (implementación de JPA) -> ORM (traductor / trabajador): implementa JPA y se encarga de traducir
+		entidades Java a SQL, además de gestionar el ciclo de vida, relaciones y persistencia de datos.
+		-Spring ORM -> Integración de Hibernate (de su trabajo) con Spring
+		-Jakarta Persistence API (JPA) -> Especificación estándar que nos brinda anotaciones como @Entity, @Id, @OneToMany, etc.
+		-Spring Transactions -> Gestión declarativa de transacciones. Ej: @Transactional
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+
+		<!-- 2 . SPRING BOOT STARTER VALIDATION -->
+		<!--
+		-Spring valida automáticamente cuando ve '@Valid'
+		-Si falla lanza MethodArgumentNotValidException
+		-Clase con @RestControllerAdvice (si existe) intercepta y lanza excepción
+
+
+		Incluye:
+		Hibernate Validator -> Implementación de Bean Validation
+		Jakarta Validation API -> Especificación estándar... @NotNull, @NotBlank, @Email, @Size, etc.
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
+		<!-- 3. SPRING BOOT STARTER WEB -->
+		<!--
+		Incluye:
+        ├─ Spring MVC
+        │  └─ Framework para crear aplicaciones web
+        │      @RestController, @GetMapping, @PostMapping
+        │
+        ├─ Tomcat Embebido
+        │  └─ Servidor web incluido (puerto 8080 por defecto)
+        │      No necesario instalar Tomcat por separado
+        │
+        ├─ Jackson
+        │  └─ Serialización/Deserialización JSON ↔ Java
+        │      Automática con @RestController
+        │
+        ├─ Spring Web
+        │  └─ Manejo de HTTP requests/responses
+        │      ResponseEntity, UriComponentsBuilder
+        │
+        └─ Logging (Logback)
+           └─ Logs en consola y archivos
+
+        Resultado:
+        api.jar
+        → Inicia Tomcat en puerto 8080
+        → Aplicación lista para recibir HTTP requests
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+
+        <!-- 4. FLYWAY CORE + FLYWAY MYSQL -->
+        <!--
+        FLYWAY = CONTROL DE VERSIONES PARA LA BD
+        SE REGISTRA QUÉ VERSIONES ESTÁN APLICADAS, Y AL INICIAR LA APP FLYWAY EJECUTA SÓLO LAS VERSIONES FALTANTES
+        BD SIEMPRE ACTUALIZADA
+        -->
+        <dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-mysql</artifactId>
+		</dependency>
+
+        <!-- 5. MYSQL CONNECTOR -->
+        <!--
+        Driver JDBC (Java Database Connectivity):
+        ├─ API estándar de Java para conectar a BD
+		├─ Define interfaces (Connection, Statement, ResultSet)
+		├─ Cada BD tiene su implementación (driver)
+
+		mysql-connector-j:
+		├─ Implementación de JDBC para MySQL
+		├─ Traduce comandos Java → Protocolo MySQL
+		├─ Maneja conexión TCP/IP con servidor MySQL
+		-->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+		<!-- 6. SPRING BOOT STARTER SECURITY -->
+		<!--
+		Incluye:
+		├─ Spring Security Core
+		│  └─ Autenticación y autorización
+		│
+		├─ Spring Security Config
+		│  └─ Configuración programática
+		│      @EnableWebSecurity, SecurityFilterChain
+		│
+		├─ Spring Security Web
+		│  └─ Filtros HTTP, CSRF protection
+		│
+		└─ BCrypt Password Encoder
+		   └─ Hashing seguro de contraseñas
+
+		Comportamiento por DEFECTO (sin configurar nada):
+		Al agregar esta dependencia:
+		1. TODOS los endpoints quedan PROTEGIDOS
+		2. Genera password aleatoria en logs:
+		   "Using generated security password: a1b2c3d4..."
+		3. Usuario por defecto: "user"
+		4. Form login activado
+
+		En ESTE proyecto:
+		Se sobrescriben defaults en SecurityConfigurations
+		→ JWT en lugar de form login
+		→ Endpoints personalizados (POST /login público)
+		→ BCrypt para contraseñas
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
+		<!-- 7. SPRING BOOT STARTER HATEOAS -->
+		<!--
+		HATEOAS = Hypermedia As The Engine Of Application State
+
+		Idea:
+		Respuesta incluye LINKS a acciones relacionadas
+		→ Cliente NO necesita construir URLs manualmente
+		→ API "autoexplicativa"
+
+		GET /medicos/1
+		{
+		  "id": 1,
+		  "nombre": "Bruno",
+		  "_links": {
+			"self": { "href": "/medicos/1" },
+			"update": { "href": "/medicos/1" },
+			"delete": { "href": "/medicos/1" },
+			"medicos": { "href": "/medicos" }
+		  }
+		}
+		Cliente DESCUBRE URLs dinámicamente
+		→ Si API cambia URLs, cliente sigue funcionando
+		-->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-hateoas</artifactId>
+		</dependency>
+
+		<!-- 8. AUTH0 JWT -->
+		<!--
+		JWT = JSON Web Token
+		Estándar para autenticación stateless
+
+		Auth0 JWT provee:
+		├─ JWT.create() → Crear tokens
+		├─ JWT.require() → Validar tokens
+		├─ Algorithm (Ej. HMAC256) → Algoritmo de firma
+		└─ Manejo de claims (subject, issuer, expiresAt...)
+		-->
+		<dependency>
+			<groupId>com.auth0</groupId>
+			<artifactId>java-jwt</artifactId>
+			<version>4.5.1</version>
+		</dependency>
+
+		<!-- 9. Lombok -->
+		<!-- Automatiza la generación de código repetitivo, como getters, setters, constructores y métodos equals o toString -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- 10. Devtools -->
+		<!-- Reinicia el proyecto automáticamente cada vez que se genera un cambio -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+
+		<!-- Tests -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- Tests -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
+		<!--Spring Doc. nos permitirá generar la documentación de nuestro proyecto-->
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.8.17</version>
+		</dependency>
+
+		<!--
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		-->
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
